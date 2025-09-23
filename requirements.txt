@@ -1,0 +1,6 @@
+streamlit==1.30.0
+tensorflow==2.13.0
+numpy==1.27.0
+opencv-python==4.8.1.78
+matplotlib==3.8.1
+gdown==4.7.1
