@@ -1,14 +1,22 @@
 import streamlit as st
 import numpy as np
 import cv2
-from tensorflow.keras.models import load_model
 import matplotlib.pyplot as plt
-
-# Load your trained model
-MODEL_PATH = "your_model.h5"  # replace with your actual model path
-model = load_model(MODEL_PATH)
+from tensorflow.keras.models import load_model
+import gdown
+import os
 
 st.title("Conditional Image Colorization")
+
+# Download model from Google Drive
+MODEL_FILE = "conditional_colorizer.h5"
+FILE_ID = "1gGL7_YPoEoaVXCnJJ3sj-aV7iwjy5FSj"  
+if not os.path.exists(MODEL_FILE):
+    url = f"https://drive.google.com/uc?id={FILE_ID}"
+    gdown.download(url, MODEL_FILE, quiet=False)
+
+# Load model
+model = load_model(MODEL_FILE)
 
 # Upload grayscale image
 uploaded_file = st.file_uploader("Upload a grayscale image", type=["png","jpg","jpeg"])
@@ -31,7 +39,7 @@ if uploaded_file:
     # Convert HEX to normalized RGB
     user_color = np.array([int(user_color[i:i+2],16)/255.0 for i in (1,3,5)])
 
-    # Prepare mask + hint
+    # Prepare mask + hint 
     mask = np.zeros_like(grayscale)
     mask[y1:y2, x1:x2, 0] = 1.0
     hint = np.zeros((32,32,3))
@@ -40,10 +48,10 @@ if uploaded_file:
     input_with_hint = np.concatenate([grayscale, mask, hint], axis=-1)
     input_with_hint = np.expand_dims(input_with_hint, axis=0)
 
-    # Predict
+    # Predict 
     colorized = model.predict(input_with_hint)[0]
 
-    # Show results 
+    # Show results
     st.subheader("Conditional Colorized Output")
     plt.figure(figsize=(8,4))
     plt.subplot(1,2,1)
@@ -53,6 +61,4 @@ if uploaded_file:
 
     plt.subplot(1,2,2)
     plt.title("Colorized Output")
-    plt.imshow(colorized)
-    plt.axis("off")
-    st.pyplot(plt)
+    plt.imshow(color
