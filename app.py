@@ -61,4 +61,6 @@ if uploaded_file:
 
     plt.subplot(1,2,2)
     plt.title("Colorized Output")
-    plt.imshow(color
+    plt.imshow(colorized)
+    plt.axis("off")
+    st.pyplot(plt)
