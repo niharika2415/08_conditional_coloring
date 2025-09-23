@@ -1,6 +1,6 @@
-streamlit>=1.29.0,<1.32.0
-tensorflow>=2.23.0,<2.26.0
-numpy>=1.26.0,<1.27.0
-opencv-python>=4.8.0,<4.9.0
-matplotlib>=3.7.0,<3.9.0
-gdown>=4.6.0,<5.0.0
+streamlit
+tensorflow
+numpy
+opencv-python
+matplotlib
+gdown
