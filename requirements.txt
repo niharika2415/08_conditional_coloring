@@ -1,6 +1,6 @@
-streamlit==1.30.0
-tensorflow==2.20.0
-numpy==1.26.5
-opencv-python
+streamlit
+tensorflow
+numpy
+opencv-python-headless
 matplotlib
 gdown
