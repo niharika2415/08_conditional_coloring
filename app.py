@@ -5,7 +5,7 @@ from PIL import Image
 from streamlit_drawable_canvas import st_canvas
 import matplotlib.pyplot as plt
 
-st.title("Conditional Image Colorization")
+st.title("Quick Conditional Image Colorization (Rectangle Fill)")
 
 # Upload grayscale image
 uploaded_file = st.file_uploader("Upload a grayscale image", type=["png", "jpg", "jpeg"])
@@ -15,6 +15,9 @@ if uploaded_file:
     file_bytes = np.frombuffer(uploaded_file.read(), np.uint8)
     gray_img = cv2.imdecode(file_bytes, cv2.IMREAD_GRAYSCALE)
     gray_img = cv2.resize(gray_img, (256, 256))  # Resize for better visualization
+
+    # Show uploaded grayscale image
+    st.image(gray_img, caption="Uploaded Grayscale", use_container_width=True)
 
     # Convert grayscale to 3-channel for color overlay
     color_img = cv2.cvtColor(gray_img, cv2.COLOR_GRAY2RGB)
@@ -27,7 +30,7 @@ if uploaded_file:
     canvas_result = st_canvas(
         fill_color=user_color,        # Auto-fill rectangles
         stroke_width=0,               # No extra stroke
-        stroke_color=user_color,      # Keep stroke same as fill
+        stroke_color=user_color,      # Stroke same as fill
         background_image=pil_color_img,
         update_streamlit=True,
         height=256,
@@ -36,7 +39,7 @@ if uploaded_file:
         key="canvas"
     )
 
-    # Display the updated image
+    # Display the updated image if the user has drawn anything
     if canvas_result.image_data is not None:
         st.subheader("Colorized Output")
         fig, ax = plt.subplots(figsize=(5,5))
