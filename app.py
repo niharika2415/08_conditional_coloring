@@ -11,7 +11,9 @@ if uploaded_file:
     # Read image
     file_bytes = np.frombuffer(uploaded_file.read(), np.uint8)
     gray_img = cv2.imdecode(file_bytes, cv2.IMREAD_GRAYSCALE)
-    gray_img = cv2.resize(gray_img, (256,256))  # Resize to bigger size for clarity
+
+    # Resize to 256x256 for better GUI experience
+    gray_img = cv2.resize(gray_img, (256, 256))
 
     st.image(gray_img, caption="Uploaded Grayscale", use_container_width=True)
 
@@ -24,8 +26,7 @@ if uploaded_file:
 
     # Pick color
     user_color = st.color_picker("Pick a color for selected region", "#FF0000")
-    # Convert HEX to RGB (0-255)
-    user_color_rgb = [int(user_color[i:i+2],16) for i in (1,3,5)]
+    user_color_rgb = [int(user_color[i:i+2],16) for i in (1,3,5)]  # HEX -> RGB
 
     # Convert grayscale to 3-channel image
     color_img = cv2.cvtColor(gray_img, cv2.COLOR_GRAY2RGB)
