@@ -1,8 +1,6 @@
 import streamlit as st
 import numpy as np
 import cv2
-from PIL import Image
-from streamlit_drawable_canvas import st_canvas
 import matplotlib.pyplot as plt
 
 st.title("Quick Conditional Image Colorization (Overlay Hack)")
@@ -13,47 +11,30 @@ if uploaded_file:
     # Read image
     file_bytes = np.frombuffer(uploaded_file.read(), np.uint8)
     gray_img = cv2.imdecode(file_bytes, cv2.IMREAD_GRAYSCALE)
-    gray_img = cv2.resize(gray_img, (256,256))  # Resize for clarity
+    
+    # Resize for clarity
+    gray_img = cv2.resize(gray_img, (256,256))
 
     st.image(gray_img, caption="Uploaded Grayscale", use_container_width=True)
 
+    st.subheader("Select region to color")
+
+    # Sliders for rectangle
+    x1 = st.slider("Top-left X", 0, gray_img.shape[1]-1, 50)
+    y1 = st.slider("Top-left Y", 0, gray_img.shape[0]-1, 50)
+    x2 = st.slider("Bottom-right X", 0, gray_img.shape[1]-1, 200)
+    y2 = st.slider("Bottom-right Y", 0, gray_img.shape[0]-1, 200)
+
     # Pick color
-    user_color = st.color_picker("Pick a color for drawing", "#FF0000")
+    user_color = st.color_picker("Pick a color for selected region", "#FF0000")
     user_color_rgb = [int(user_color[i:i+2],16) for i in (1,3,5)]
 
-    # Create a canvas to draw rectangles
-    canvas_result = st_canvas(
-        fill_color=None,
-        stroke_width=10,
-        stroke_color=user_color,  # must be hex string
-        background_image=Image.fromarray(gray_img),
-        update_streamlit=True,
-        height=256,
-        width=256,
-        drawing_mode="rect",
-        key="canvas"
-    )
-
-    # Convert grayscale to 3-channel image
+    # Convert grayscale to 3-channel
     color_img = cv2.cvtColor(gray_img, cv2.COLOR_GRAY2RGB)
 
-    # Apply drawn rectangles to color image
-    if canvas_result.json_data is not None:
-        for obj in canvas_result.json_data["objects"]:
-            if obj["type"] == "rect":
-                x0, y0 = int(obj["left"]), int(obj["top"])
-                x1, y1 = int(obj["left"] + obj["width"]), int(obj["top"] + obj["height"])
-                color_img[y0:y1, x0:x1] = user_color_rgb
+    # Overlay color on selected region
+    color_img[y1:y2, x1:x2] = user_color_rgb
 
     # Show side-by-side
     st.subheader("Result")
-    fig, axes = plt.subplots(1,2, figsize=(10,5))
-    axes[0].imshow(gray_img, cmap='gray')
-    axes[0].set_title("Grayscale Input")
-    axes[0].axis('off')
-
-    axes[1].imshow(color_img)
-    axes[1].set_title("Overlayed Output")
-    axes[1].axis('off')
-
-    st.pyplot(fig)
+    fig, axes = plt.subplots(1,2, figsize=(10,5
