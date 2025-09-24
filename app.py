@@ -16,12 +16,12 @@ if uploaded_file:
     gray_img = cv2.imdecode(file_bytes, cv2.IMREAD_GRAYSCALE)
     gray_img = cv2.resize(gray_img, (256, 256))  # Resize for better visualization
 
-    # Show uploaded grayscale image
-    st.image(gray_img, caption="Uploaded Grayscale", use_container_width=True)
-
     # Convert grayscale to 3-channel for color overlay
     color_img = cv2.cvtColor(gray_img, cv2.COLOR_GRAY2RGB)
     pil_color_img = Image.fromarray(color_img)
+
+    # Show uploaded grayscale image
+    st.image(pil_color_img, caption="Uploaded Grayscale", use_container_width=True)
 
     # Pick color
     user_color = st.color_picker("Pick a color for rectangles", "#FF0000")
@@ -41,8 +41,13 @@ if uploaded_file:
 
     # Display the updated image if the user has drawn anything
     if canvas_result.image_data is not None:
+        # Remove alpha channel if exists
+        final_img = canvas_result.image_data.astype(np.uint8)
+        if final_img.shape[2] == 4:  # RGBA -> RGB
+            final_img = final_img[...,:3]
+
         st.subheader("Colorized Output")
         fig, ax = plt.subplots(figsize=(5,5))
-        ax.imshow(canvas_result.image_data.astype(np.uint8))
+        ax.imshow(final_img)
         ax.axis('off')
         st.pyplot(fig)
