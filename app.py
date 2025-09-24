@@ -9,8 +9,8 @@ import os
 st.title("Conditional Image Colorization")
 
 # Download model from Google Drive
-MODEL_FILE = "conditional_colorizer.h5"
-FILE_ID = "1gGL7_YPoEoaVXCnJJ3sj-aV7iwjy5FSj"  
+MODEL_FILE = "conditional_colorizer.keras"
+FILE_ID = "1E5WNE3oWyVd_WKDe7Niyyh7-RQ91ixRQ"  
 if not os.path.exists(MODEL_FILE):
     url = f"https://drive.google.com/uc?id={FILE_ID}"
     gdown.download(url, MODEL_FILE, quiet=False)
