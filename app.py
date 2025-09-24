@@ -5,7 +5,7 @@ from PIL import Image
 from streamlit_drawable_canvas import st_canvas
 import matplotlib.pyplot as plt
 
-st.title("Quick Conditional Image Colorization (Rectangle Fill)")
+st.title("Conditional Image Colorization")
 
 # Upload grayscale image
 uploaded_file = st.file_uploader("Upload a grayscale image", type=["png", "jpg", "jpeg"])
