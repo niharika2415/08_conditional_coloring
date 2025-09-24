@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import cv2
+from streamlit_drawable_canvas import st_canvas
 import matplotlib.pyplot as plt
 
 st.title("Quick Conditional Image Colorization (Overlay Hack)")
@@ -14,25 +15,34 @@ if uploaded_file:
 
     # Resize to 256x256 for better GUI experience
     gray_img = cv2.resize(gray_img, (256, 256))
-
-    st.image(gray_img, caption="Uploaded Grayscale", use_container_width=True)
-
-    # User selects rectangle region
-    st.write("Select region to color (enter pixel coordinates)")
-    x1 = st.number_input("x1", 0, gray_img.shape[1]-1, 0)
-    y1 = st.number_input("y1", 0, gray_img.shape[0]-1, 0)
-    x2 = st.number_input("x2", 0, gray_img.shape[1]-1, gray_img.shape[1]-1)
-    y2 = st.number_input("y2", 0, gray_img.shape[0]-1, gray_img.shape[0]-1)
+    color_img = cv2.cvtColor(gray_img, cv2.COLOR_GRAY2RGB)
 
     # Pick color
     user_color = st.color_picker("Pick a color for selected region", "#FF0000")
-    user_color_rgb = [int(user_color[i:i+2],16) for i in (1,3,5)]  # HEX -> RGB
+    user_color_rgb = [int(user_color[i:i+2],16) for i in (1,3,5)]
 
-    # Convert grayscale to 3-channel image
-    color_img = cv2.cvtColor(gray_img, cv2.COLOR_GRAY2RGB)
+    # Create a canvas to draw rectangle
+    canvas_result = st_canvas(
+        fill_color=None,
+        stroke_width=5,
+        stroke_color=user_color,
+        background_image=gray_img,
+        update_streamlit=True,
+        height=256,
+        width=256,
+        drawing_mode="rect",
+        key="canvas",
+    )
 
-    # Overlay user color on selected region
-    color_img[y1:y2, x1:x2] = user_color_rgb
+    # Overlay rectangle color if drawn
+    if canvas_result.json_data is not None:
+        objects = canvas_result.json_data["objects"]
+        for obj in objects:
+            left = int(obj["left"])
+            top = int(obj["top"])
+            width = int(obj["width"])
+            height = int(obj["height"])
+            color_img[top:top+height, left:left+width] = user_color_rgb
 
     # Show side-by-side
     st.subheader("Result")
