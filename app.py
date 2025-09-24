@@ -16,7 +16,7 @@ if not os.path.exists(MODEL_FILE):
     gdown.download(url, MODEL_FILE, quiet=False)
 
 # Load model
-model = load_model(MODEL_FILE)
+model = load_model(MODEL_FILE, compile=False)
 
 # Upload grayscale image
 uploaded_file = st.file_uploader("Upload a grayscale image", type=["png","jpg","jpeg"])
