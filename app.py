@@ -37,4 +37,13 @@ if uploaded_file:
 
     # Show side-by-side
     st.subheader("Result")
-    fig, axes = plt.subplots(1,2, figsize=(10,5
+    fig, axes = plt.subplots(1,2, figsize=(10,5))
+    axes[0].imshow(gray_img, cmap='gray')
+    axes[0].set_title("Grayscale Input")
+    axes[0].axis('off')
+
+    axes[1].imshow(color_img)
+    axes[1].set_title("Overlayed Output")
+    axes[1].axis('off')
+
+    st.pyplot(fig)
